@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 from simulator import MemorySimulator
 
+#The global function that makes the application display at the center by default
 def center_window(window):
     window.update_idletasks()
     width = window.winfo_reqwidth()
@@ -13,7 +14,10 @@ def center_window(window):
     y = (screen_height // 2) - (height // 2)
     window.geometry(f'{width}x{height}+{x}+{y}')
 
+#GUI that aquires the input of the parameters of the First-Fit Memory Allocation Simulation
+#First window the user sees when executing the program
 class InputForm(tk.Tk):
+    #Defines the constructor of the setup window of the program
     def __init__(self):
         super().__init__()
         self.title("First Fit Simulation Setup")
@@ -99,12 +103,14 @@ class InputForm(tk.Tk):
 
         center_window(self)
 
+    #Helper method that deletes all items currently in the Treeview and re-adds them to the process list
     def refresh_process_tree(self):
         self.process_tree.delete(*self.process_tree.get_children())
         for i, p in enumerate(self.process_data):
             pid = i + 1
             self.process_tree.insert("", "end", values=(pid, p['size'], p['burst']))
 
+    #Opens a window for editing or deleting a process when double clicking a row
     def on_process_double_click(self, event):
         try:
             selected_item = self.process_tree.selection()[0]
@@ -122,6 +128,7 @@ class InputForm(tk.Tk):
         except IndexError:
             pass 
 
+    #Creates the window that allows users to edit or delete a process
     def open_edit_window(self, index):
         try:
             process = self.process_data[index]
@@ -163,6 +170,7 @@ class InputForm(tk.Tk):
 
         self.wait_window(self.edit_win)
 
+    #Function that saves the edited details of a process
     def save_edit(self, index):
         try:
             new_size = int(self.edit_size_entry.get())
@@ -177,17 +185,20 @@ class InputForm(tk.Tk):
         except ValueError as e:
             messagebox.showerror("Invalid Input", f"Please enter valid positive numbers.\n({e})", parent=self.edit_win)
 
+    #Function that deletes the details of a process
     def delete_process(self, index):
         if messagebox.askyesno("Confirm Delete", f"Are you sure you want to delete Process {index + 1}?", parent=self.edit_win):
             self.process_data.pop(index)
             self.refresh_process_tree()
             self.edit_win.destroy()
 
+    #Function that clears all existing processes that has been inputed
     def clear_processes(self):
         if messagebox.askyesno("Confirm Clear", "Are you sure you want to clear all processes?"):
             self.process_data.clear()
             self.refresh_process_tree()
 
+    #Function that adds the inputted process of the user
     def add_process(self):
         try:
             size = int(self.size_entry.get())
@@ -203,6 +214,7 @@ class InputForm(tk.Tk):
         except ValueError:
             messagebox.showerror("Invalid Input", "Please enter valid positive numbers for Size and Burst Time.")
 
+    #Function that starts the simulation of the First-fit memory allocation algorithm
     def start_simulation(self):
         try:
             total_mem = int(self.mem_entry.get())
@@ -228,7 +240,9 @@ class InputForm(tk.Tk):
             messagebox.showerror("Error", str(e))
             self.deiconify() 
 
+#GUI that shows a visualization of the First-Fit Memory Allocation Simulation
 class VisualApp(tk.Tk):
+    #Defines the constructor of the window that visualizes of the simulation
     def __init__(self, input_form):
         super().__init__()
         self.simulation = None 
@@ -270,20 +284,24 @@ class VisualApp(tk.Tk):
 
         center_window(self)
 
+    #Function that defines the functionality of being able to run a new simulation after a finished simulation
     def run_new_simulation(self):
         self.destroy()
         self.input_form.deiconify()
         center_window(self.input_form) 
 
+    #Function the closes the current window and opens up the setup window.
     def on_close(self):
         self.destroy()
         self.input_form.deiconify()
         center_window(self.input_form)
 
+    #Function that stores the simulation object and starts the visualization of the current simulation
     def run_simulation(self, simulation):
         self.simulation = simulation
         self.after(500, self.update_simulation) 
 
+    #Displays the current events that are happening during the simulation.
     def log_message(self, message):
         self.log_text.config(state="normal") 
         self.log_text.insert(tk.END, message + "\n")
@@ -291,13 +309,15 @@ class VisualApp(tk.Tk):
         self.log_text.config(state="disabled") 
         self.update_idletasks() 
 
+    #Helper function that gives each process allocating a memory block an unique color
     def _get_color_for_pid(self, pid):
         if pid == -1: return "#E0E0E0"
         r = (pid * 55) % 200 + 55
         g = (pid * 95) % 200 + 55
         b = (pid * 35) % 200 + 55
         return f"#{r:02x}{g:02x}{b:02x}"
-
+    
+    #Draws each process that has allocated a memory block
     def draw_memory(self):
         self.canvas.delete("all") 
         canvas_width = self.canvas.winfo_width()
@@ -329,6 +349,7 @@ class VisualApp(tk.Tk):
                 
             self.canvas.create_text((x1 + x2) / 2, canvas_height / 2, text=text_content, fill=text_fill)
 
+    #Visualizes the events of the simulation for each second in the simulation
     def update_simulation(self):
         if not self.simulation:
             return 

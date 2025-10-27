@@ -1,3 +1,4 @@
+#Defines the attributes of each process
 class Process:
     def __init__(self, pid, size, burst_time):
         self.pid = pid
@@ -8,6 +9,7 @@ class Process:
         self.is_finished = False
         self.allocated_block_index = -1
 
+#Defines the attributes of the displayed memory block
 class MemoryBlock:
     def __init__(self, start, end, size, is_free=True, pid=-1):
         self.start = start

@@ -1,6 +1,8 @@
 from models import Process, MemoryBlock
 
+#Deinfes the logic of the First-Fit memory allocation simulator and its relevant functions
 class MemorySimulator:
+    #Defines the constructor of the First-Fit simulator
     def __init__(self, total_memory, ch_interval, sc_interval, process_inputs, logger_func):
         self.total_memory_size = total_memory
         self.ch_time = ch_interval
@@ -18,24 +20,29 @@ class MemorySimulator:
         self._initialize_memory()
         self._initialize_processes()
 
+    #Helper method that creates the intial MemoryBlock
     def _initialize_memory(self):
         initial_block = MemoryBlock(0, self.total_memory_size - 1, self.total_memory_size)
         self.memory_blocks.append(initial_block)
 
+    #Helper method that loops through the given inputs in a list and creates Process objects for each of them
     def _initialize_processes(self):
         for i, p_input in enumerate(self.process_inputs):
             process = Process(pid=i+1, size=p_input['size'], burst_time=p_input['burst'])
             self.process_list.append(process)
 
+    #Helper method that searches a process in a list based on their pid value.
     def _get_process_by_pid(self, pid):
         for p in self.process_list:
             if p.pid == pid:
                 return p
         return None
 
+    #Helper method that sorts the list of memory blocks based on their start address
     def _sort_blocks(self):
         self.memory_blocks.sort(key=lambda block: block.start)
 
+    #Function that implements the First-Fit memory allocation algorithm
     def first_fit(self, process):
         self._sort_blocks()
         
@@ -60,6 +67,7 @@ class MemorySimulator:
                 return True
         return False
 
+    #Function that frees memory after a process is finished executing
     def free_memory(self, process):
         block_to_free = None
         for block in self.memory_blocks:
@@ -78,6 +86,7 @@ class MemorySimulator:
         process.remaining_time = 0
         self.processes_completed += 1
 
+    #Function that implements the Coalescing Holes (CH) technique
     def coalesce(self):
         self.logger("- Running Coalescing (CH)")
         self._sort_blocks()
@@ -92,6 +101,7 @@ class MemorySimulator:
             else:
                 i += 1
 
+    #Function that implements the Storage Compaction (SC) technique.
     def compact(self):
         self.logger("- Running Compaction (SC)")
         new_blocks_list = []
@@ -119,6 +129,11 @@ class MemorySimulator:
             new_blocks_list.append(free_block)
         self.memory_blocks = new_blocks_list
 
+    
+    """
+    Function that describes the events occuring in the first-fit algorithm simulation for each
+    second in the timeline
+    """
     def step(self):
         if self.processes_completed >= self.num_processes:
             return False 
