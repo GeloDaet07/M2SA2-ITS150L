@@ -1,6 +1,6 @@
 from models import Process, MemoryBlock
 
-#Deinfes the logic of the First-Fit memory allocation simulator and its relevant functions
+#Defines the logic of the First-Fit memory allocation simulator and its relevant functions
 class MemorySimulator:
     #Defines the constructor of the First-Fit simulator
     def __init__(self, total_memory, ch_interval, sc_interval, process_inputs, logger_func):
@@ -20,7 +20,7 @@ class MemorySimulator:
         self._initialize_memory()
         self._initialize_processes()
 
-    #Helper method that creates the intial MemoryBlock
+    #Helper method that creates the initial MemoryBlock
     def _initialize_memory(self):
         initial_block = MemoryBlock(0, self.total_memory_size - 1, self.total_memory_size)
         self.memory_blocks.append(initial_block)

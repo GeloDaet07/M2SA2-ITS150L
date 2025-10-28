@@ -14,7 +14,7 @@ def center_window(window):
     y = (screen_height // 2) - (height // 2)
     window.geometry(f'{width}x{height}+{x}+{y}')
 
-#GUI that aquires the input of the parameters of the First-Fit Memory Allocation Simulation
+#GUI that acquires the input of the parameters of the First-Fit Memory Allocation Simulation
 #First window the user sees when executing the program
 class InputForm(tk.Tk):
     #Defines the constructor of the setup window of the program
@@ -192,13 +192,13 @@ class InputForm(tk.Tk):
             self.refresh_process_tree()
             self.edit_win.destroy()
 
-    #Function that clears all existing processes that has been inputed
+    #Function that clears all existing processes that has been input
     def clear_processes(self):
         if messagebox.askyesno("Confirm Clear", "Are you sure you want to clear all processes?"):
             self.process_data.clear()
             self.refresh_process_tree()
 
-    #Function that adds the inputted process of the user
+    #Function that adds the input process of the user
     def add_process(self):
         try:
             size = int(self.size_entry.get())
@@ -242,7 +242,7 @@ class InputForm(tk.Tk):
 
 #GUI that shows a visualization of the First-Fit Memory Allocation Simulation
 class VisualApp(tk.Tk):
-    #Defines the constructor of the window that visualizes of the simulation
+    #Defines the constructor of the window that visualizes the simulation
     def __init__(self, input_form):
         super().__init__()
         self.simulation = None 
@@ -290,7 +290,7 @@ class VisualApp(tk.Tk):
         self.input_form.deiconify()
         center_window(self.input_form) 
 
-    #Function the closes the current window and opens up the setup window.
+    #Function that closes the current window and opens up the setup window.
     def on_close(self):
         self.destroy()
         self.input_form.deiconify()
